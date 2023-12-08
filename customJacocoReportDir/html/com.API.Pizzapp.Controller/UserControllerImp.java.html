@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserControllerImp.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Pizzapp</a> &gt; <a href="index.source.html" class="el_package">com.API.Pizzapp.Controller</a> &gt; <span class="el_source">UserControllerImp.java</span></div><h1>UserControllerImp.java</h1><pre class="source lang-java linenums">package com.API.Pizzapp.Controller;
+
+
+import com.API.Pizzapp.Models.*;
+import com.API.Pizzapp.Security.JWTAutorizationFilter;
+import com.API.Pizzapp.Security.JwtAuthenticationFilter;
+import com.API.Pizzapp.Services.JwtService;
+import com.API.Pizzapp.Services.UserServiceI;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(&quot;/v1/User&quot;)
+@CrossOrigin(&quot;*&quot;)
+public class UserControllerImp implements  UserControllerI{
+
+
+    UserServiceI userServiceI;
+
+    JwtAuthenticationFilter jwtAutorizationFilter;
+
+    JwtService jwtService;
+    @Autowired
+<span class="fc" id="L27">    public UserControllerImp(UserServiceI userServiceI, JwtAuthenticationFilter jwtAutorizationFilter, JwtService jwtService) {</span>
+<span class="fc" id="L28">        this.userServiceI = userServiceI;</span>
+<span class="fc" id="L29">        this.jwtAutorizationFilter = jwtAutorizationFilter;</span>
+<span class="fc" id="L30">        this.jwtService = jwtService;</span>
+<span class="fc" id="L31">    }</span>
+
+
+
+
+    @RequestMapping(method = RequestMethod.POST, path = &quot;/createUser&quot;)
+    public ResponseEntity createUser(@RequestBody UserEntity userEntity){
+
+<span class="fc" id="L39">        AuthResponse responseDTO= new AuthResponse();</span>
+        try{
+
+<span class="fc" id="L42">            responseDTO=(userServiceI.createUser(userEntity));</span>
+
+<span class="fc" id="L44">            return  new ResponseEntity(responseDTO,HttpStatus.CREATED );</span>
+<span class="fc" id="L45">        }catch (Exception e){</span>
+<span class="fc" id="L46">            ResponseDTO responseDTO1= new ResponseDTO();</span>
+<span class="fc" id="L47">            responseDTO1.setResponse(&quot;Error al crear usuario&quot;);</span>
+<span class="fc" id="L48">            return new ResponseEntity&lt;&gt;(responseDTO1, HttpStatus.NOT_ACCEPTABLE);</span>
+        }
+    }
+
+
+    @RequestMapping(method = RequestMethod.POST, path = &quot;/loginUser&quot;)
+       public ResponseEntity loginUser(@RequestBody LoginDTO loginDTO) {
+
+        AuthResponse responseDTO;
+        try {
+
+<span class="fc" id="L59">            responseDTO = (userServiceI.loginUser(loginDTO));</span>
+
+<span class="fc" id="L61">            return new ResponseEntity(responseDTO, HttpStatus.CREATED);</span>
+<span class="fc" id="L62">        } catch (Exception e) {</span>
+<span class="fc" id="L63">            ResponseDTO responseDTO1= new ResponseDTO();</span>
+<span class="fc" id="L64">            responseDTO1.setResponse(&quot;Error aL ingresar: &quot;+ e.getMessage() );</span>
+<span class="fc" id="L65">            return new ResponseEntity&lt;&gt;(responseDTO1,HttpStatus.NOT_ACCEPTABLE);</span>
+        }
+    }
+
+
+
+    @RequestMapping(method = RequestMethod.PATCH, path = &quot;/updateUser&quot;)
+    public ResponseEntity updateUser(HttpServletRequest request,@RequestBody UserEntity userEntity) {
+
+        UserEntity responseDTO;
+        try {
+<span class="fc" id="L76">            String token= jwtAutorizationFilter.getTokenFromRequest(request);</span>
+<span class="fc" id="L77">            String email= jwtService.getUsernameFromToken(token);</span>
+<span class="fc" id="L78">            responseDTO = (userServiceI.updateUser(email,userEntity));</span>
+
+<span class="fc" id="L80">            return new ResponseEntity(responseDTO, HttpStatus.CREATED);</span>
+<span class="fc" id="L81">        } catch (Exception e) {</span>
+<span class="fc" id="L82">            ResponseDTO responseDTO1= new ResponseDTO();</span>
+<span class="fc" id="L83">            responseDTO1.setResponse(&quot;Error aL actualizar: &quot;+ e.getMessage() );</span>
+<span class="fc" id="L84">            return new ResponseEntity&lt;&gt;(responseDTO1,HttpStatus.NOT_ACCEPTABLE);</span>
+        }
+    }
+
+    @PostMapping(&quot;/request-password-reset&quot;)
+    public ResponseEntity&lt;?&gt; requestPasswordReset(@RequestBody ForgetPasswordDTO forgetPasswordDTO) {
+<span class="nc" id="L90">        ResponseDTO responseDTO= new ResponseDTO();</span>
+        try{
+<span class="nc" id="L92">            userServiceI.sendVerificationCode(forgetPasswordDTO.getEmail());</span>
+<span class="nc" id="L93">            responseDTO.setResponse(&quot;CÃ³digo de verificaciÃ³n enviado.&quot;);</span>
+<span class="nc" id="L94">            return ResponseEntity.ok(responseDTO);</span>
+<span class="nc" id="L95">        }catch (Exception e){</span>
+
+<span class="nc" id="L97">            responseDTO.setResponse(e.getMessage());</span>
+<span class="nc" id="L98">            return new ResponseEntity&lt;&gt;(responseDTO,HttpStatus.NOT_ACCEPTABLE);</span>
+
+        }
+
+    }
+
+    @PostMapping(&quot;/verify-code&quot;)
+    public ResponseEntity&lt;?&gt; requestPasswordReset(@RequestBody ResponseCodeDTO responseCodeDTO) {
+<span class="nc" id="L106">        ResponseDTO responseDTO= new ResponseDTO();</span>
+
+        try{
+
+<span class="nc" id="L110">            String response = userServiceI.verifyCode(responseCodeDTO.getEmail(), responseCodeDTO.getCode());</span>
+<span class="nc" id="L111">            responseDTO.setResponse(response);</span>
+<span class="nc" id="L112">            return ResponseEntity.ok(responseDTO);</span>
+<span class="nc" id="L113">        }catch (Exception e){</span>
+<span class="nc" id="L114">            responseDTO.setResponse(e.getMessage());</span>
+<span class="nc" id="L115">            return new ResponseEntity&lt;&gt;(responseDTO,HttpStatus.NOT_ACCEPTABLE);</span>
+        }
+    }
+
+
+    @RequestMapping(method = RequestMethod.PATCH, path = &quot;/updatePassword/{email}&quot;)
+    public ResponseEntity changePassword(@PathVariable  String email, @RequestBody UserEntity userEntity) {
+
+        UserEntity responseDTO;
+        try {
+
+<span class="nc" id="L126">            responseDTO = (userServiceI.updateUser(email,userEntity));</span>
+
+<span class="nc" id="L128">            return new ResponseEntity(responseDTO, HttpStatus.CREATED);</span>
+<span class="nc" id="L129">        } catch (Exception e) {</span>
+<span class="nc" id="L130">            ResponseDTO responseDTO1= new ResponseDTO();</span>
+<span class="nc" id="L131">            responseDTO1.setResponse(&quot;Error aL actualizar: &quot;+ e.getMessage() );</span>
+<span class="nc" id="L132">            return new ResponseEntity&lt;&gt;(responseDTO1,HttpStatus.NOT_ACCEPTABLE);</span>
+        }
+    }
+
+
+
+    @RequestMapping(method = RequestMethod.GET, path = &quot;/deleteUser&quot;)
+    public ResponseEntity desactiveUser(HttpServletRequest request) {
+
+        UserEntity responseDTO;
+        try {
+<span class="nc" id="L143">            String token= jwtAutorizationFilter.getTokenFromRequest(request);</span>
+<span class="nc" id="L144">            String email= jwtService.getUsernameFromToken(token);</span>
+<span class="nc" id="L145">            responseDTO = (userServiceI.deleteUser(email));</span>
+
+<span class="nc" id="L147">            return new ResponseEntity(responseDTO, HttpStatus.CREATED);</span>
+<span class="nc" id="L148">        } catch (Exception e) {</span>
+<span class="nc" id="L149">            ResponseDTO responseDTO1= new ResponseDTO();</span>
+<span class="nc" id="L150">            responseDTO1.setResponse(&quot;Error aL actualizar: &quot;+ e.getMessage() );</span>
+<span class="nc" id="L151">            return new ResponseEntity&lt;&gt;(responseDTO1,HttpStatus.NOT_ACCEPTABLE);</span>
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = &quot;/activeUser/{email}&quot;)
+    public ResponseEntity activeUser(@PathVariable  String email  ) {
+
+        UserEntity responseDTO;
+        try {
+
+<span class="nc" id="L161">            responseDTO = (userServiceI.activeUser(email));</span>
+
+<span class="nc" id="L163">            return new ResponseEntity(responseDTO, HttpStatus.CREATED);</span>
+<span class="nc" id="L164">        } catch (Exception e) {</span>
+<span class="nc" id="L165">            ResponseDTO responseDTO1= new ResponseDTO();</span>
+<span class="nc" id="L166">            responseDTO1.setResponse(&quot;Error aL actualizar: &quot;+ e.getMessage() );</span>
+<span class="nc" id="L167">            return new ResponseEntity&lt;&gt;(responseDTO1,HttpStatus.NOT_ACCEPTABLE);</span>
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = &quot;/getUser&quot;)
+    public ResponseEntity getImage(HttpServletRequest request) {
+
+        UserGetDTO responseDTO;
+        try {
+
+<span class="nc" id="L177">            String token= jwtAutorizationFilter.getTokenFromRequest(request);</span>
+<span class="nc" id="L178">            String email= jwtService.getUsernameFromToken(token);</span>
+<span class="nc" id="L179">            responseDTO = (userServiceI.getUserEmail(email));</span>
+
+<span class="nc" id="L181">            return new ResponseEntity(responseDTO, HttpStatus.CREATED);</span>
+<span class="nc" id="L182">        } catch (Exception e) {</span>
+<span class="nc" id="L183">            ResponseDTO responseDTO1= new ResponseDTO();</span>
+<span class="nc" id="L184">            responseDTO1.setResponse(&quot;Error al cargar datos: &quot;+ e.getMessage() );</span>
+<span class="nc" id="L185">            return new ResponseEntity&lt;&gt;(responseDTO1,HttpStatus.NOT_ACCEPTABLE);</span>
+        }
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
