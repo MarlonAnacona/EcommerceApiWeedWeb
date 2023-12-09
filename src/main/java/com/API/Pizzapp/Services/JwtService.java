@@ -1,13 +1,16 @@
 package com.API.Pizzapp.Services;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.API.Pizzapp.Models.UserDetailsImpl;
-import com.API.Pizzapp.Models.UserEntity;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.io.IOException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +25,6 @@ public class JwtService {
 
     private static final String SECRET_KEY="586E3272357538782F413F4428472B4B6250655368566B597033733676397924";
 
-    public String getToken(UserDetails user) {
-        Map<String, Object> extraClaims = new HashMap<>();
-
-        if (user instanceof UserDetailsImpl) {
-            UserEntity customUser = ((UserDetailsImpl) user).getUserEntity();
-
-            extraClaims.put("nombre", customUser.getNombre());
-            extraClaims.put("nombreUsuario", customUser.getNombreUsuario());
-            extraClaims.put("apellido", customUser.getApellido());
-        }
-        return getToken(extraClaims, user);
-    }
 
     private String getToken(Map<String,Object> extraClaims, UserDetails user) {
         return Jwts
@@ -51,12 +42,11 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String getUsernameFromToken(String token) {
-        return getClaim(token, Claims::getSubject);
+    public Long getUsernameFromToken(String token) {
+        return getClaim(token, claims -> claims.get("userId", Long.class));
     }
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username=getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername())&& !isTokenExpired(token));
+    public boolean isTokenValid(String token ) {
+        return (!isTokenExpired(token));
     }
 
     private Claims getAllClaims(String token)
@@ -80,9 +70,51 @@ public class JwtService {
         return getClaim(token, Claims::getExpiration);
     }
 
-    private boolean isTokenExpired(String token)
-    {
-        return getExpiration(token).before(new Date());
+    public Long getUserIdFromToken(String token) {
+        Map<String, Object> payloadMap = decodePayloadToMap(token);
+        if (payloadMap != null) {
+            return ((Number) payloadMap.get("userId")).longValue();
+        }
+        return null;
+    }
+
+    public boolean isTokenExpired(String token) {
+        Map<String, Object> payloadMap = decodePayloadToMap(token);
+        if (payloadMap != null) {
+            Date expiration;
+            Object expObj = payloadMap.get("exp");
+            if (expObj instanceof Integer) {
+                expiration = new Date(((Integer) expObj).longValue() * 1000);
+            } else if (expObj instanceof Long) {
+                expiration = new Date((Long) expObj * 1000);
+            } else {
+                return true; // Si no se puede determinar la fecha de expiración, considera el token como expirado
+            }
+            return expiration.before(new Date());
+        }
+        return true;
+    }
+
+    private Map<String, Object> decodePayloadToMap(String token) {
+        String payload = decodePayload(token);
+        if (payload != null) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                return objectMapper.readValue(payload, Map.class);
+            } catch (IOException | JsonProcessingException e) {
+                e.printStackTrace(); // Manejo de la excepción
+            }
+        }
+        return null;
+    }
+
+    private String decodePayload(String token) {
+        String[] parts = token.split("\\.");
+        if (parts.length == 3) {
+            byte[] decoded = Base64.getUrlDecoder().decode(parts[1]);
+            return new String(decoded, StandardCharsets.UTF_8);
+        }
+        return null;
     }
 
 }

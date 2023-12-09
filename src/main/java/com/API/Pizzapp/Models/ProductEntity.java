@@ -5,35 +5,44 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.math.BigDecimal;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ComprasEntity {
+public class ProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
+    private String code;
+
     @Column(nullable = false)
-    private Date dateCreation;
+    private String name;
 
-    @Column(nullable = false, unique = true)
-    private String author;
+    @Column(length = 1024) // Asumiendo que la descripción puede ser larga
+    private String description;
 
-    @Column(nullable = false, unique = true)
-    private String typePizza;
+    @Column(nullable = true)
+    private  byte[] profilePicture;
 
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @Column(nullable = false)
+    private BigDecimal price;
 
     @ManyToOne
-    @JoinColumn(name = "restaurante_id", nullable = false)
-    private RestauranEntity restaurante;
+    @JoinColumn(name = "category_id")
+    private CategoryEntity category;
+
+
+    @Column(nullable = false)
+    private Integer quantity;
+
+
+
+    @Column(nullable = false)
+    private Integer rating;
+
 }
-
-

@@ -1,28 +1,17 @@
 package com.API.Pizzapp.Controller;
 
-import com.API.Pizzapp.Models.ResponseCodeDTO;
-import com.API.Pizzapp.Models.UserEntity;
+import com.API.Pizzapp.Models.PurchaseDTO;
+import com.API.Pizzapp.Models.PurchaseEntity;
+
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
-public interface UserControllerI {
-
-
-    public ResponseEntity createUser(@RequestBody UserEntity userEntity);
+public interface PurchaseControllerI {
 
 
-    public ResponseEntity updateUser(HttpServletRequest request, @RequestBody UserEntity userEntity);
-
-    public ResponseEntity<?> requestPasswordReset(@RequestBody ResponseCodeDTO responseCodeDTO);
-
-    public ResponseEntity changePassword(String request, @RequestBody UserEntity userEntity);
-
-    public ResponseEntity desactiveUser(HttpServletRequest request);
-
-    public ResponseEntity activeUser(String email);
-
-    public ResponseEntity getImage(HttpServletRequest request);
-
+    public ResponseEntity<?> createPurchase(HttpServletRequest request, @RequestBody PurchaseDTO purchaseDTO, @RequestHeader("email") String email);
+    public ResponseEntity<?> getPurchases(HttpServletRequest request);
 
 }

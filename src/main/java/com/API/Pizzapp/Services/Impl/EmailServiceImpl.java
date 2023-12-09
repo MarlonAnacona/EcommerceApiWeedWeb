@@ -87,7 +87,7 @@ public class EmailServiceImpl implements EmarilServiceI {
             "</html>";
 
     @Override
-    public void sendEmail(String to, String subject, String code) {
+    public String sendEmail(String to, String subject, Long code) {
         String htmlContent = String.format(htmlTemplate, code);
 
         try {
@@ -99,6 +99,7 @@ public class EmailServiceImpl implements EmarilServiceI {
             helper.setText(htmlContent, true);
 
             mailSender.send(message);
+            return  "Envio éxitoso";
         }  catch (MessagingException e) {
             throw new RuntimeException(e);
         }

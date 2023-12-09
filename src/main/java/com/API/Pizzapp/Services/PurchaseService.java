@@ -1,27 +1,19 @@
 package com.API.Pizzapp.Services;
 
-import com.API.Pizzapp.Models.AuthResponse;
-import com.API.Pizzapp.Models.UserEntity;
+import com.API.Pizzapp.Models.GetPurchaseDTO;
+import com.API.Pizzapp.Models.PurchaseDTO;
+import com.API.Pizzapp.Models.PurchaseEntity;
+
+import java.util.List;
+import java.util.Optional;
 
 
-public interface UserServiceI {
+public interface PurchaseService {
 
 
-    public AuthResponse createUser(UserEntity userEntity) ;
+    public PurchaseEntity createPurchase(String id, PurchaseDTO purchaseDTO) throws Exception;
 
-    public AuthResponse loginUser(LoginDTO loginDTO) throws Exception;
+    public List<GetPurchaseDTO> getPurchaseById(Long id);
 
-    public UserEntity updateUser(String email, UserEntity userUpdates) throws Exception;
-
-
-    public UserEntity deleteUser(String email ) throws Exception;
-    public UserEntity activeUser(String email ) throws Exception;
-
-
-    public String sendVerificationCode(String email) throws Exception;
-
-    public String verifyCode(String email, String code) throws Exception;
-
-    public UserGetDTO getUserEmail(String email) throws Exception;
 
 }

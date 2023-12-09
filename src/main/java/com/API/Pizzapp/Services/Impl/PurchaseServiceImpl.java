@@ -2,77 +2,145 @@ package com.API.Pizzapp.Services.Impl;
 
 
 import com.API.Pizzapp.Models.*;
+import com.API.Pizzapp.Repository.ProductRepository;
+import com.API.Pizzapp.Repository.PurchaseItemRepository;
 import com.API.Pizzapp.Repository.PurchaseRepository;
-import com.API.Pizzapp.Repository.VerificationCodeRepository;
 import com.API.Pizzapp.Services.JwtService;
-import com.API.Pizzapp.Services.UserServiceI;
+import com.API.Pizzapp.Services.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserServiceI {
+public class PurchaseServiceImpl implements PurchaseService {
 
 
 
     private final PurchaseRepository purchaseRepository;
-    private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
 
-    private VerificationCodeRepository codeRepository;
+    private final PurchaseItemRepository purchaseItemRepository;
+
 
     private EmailServiceImpl emailService;
 
+    private ProductRepository productRepository;
     @Autowired
-    public UserServiceImpl(PurchaseRepository purchaseRepository, JwtService jwtService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, VerificationCodeRepository codeRepository, EmailServiceImpl emailService) {
+    public PurchaseServiceImpl(PurchaseRepository purchaseRepository, PurchaseItemRepository purchaseItemRepository, EmailServiceImpl emailService, ProductRepository productRepository) {
         this.purchaseRepository = purchaseRepository;
-        this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.codeRepository = codeRepository;
+        this.purchaseItemRepository = purchaseItemRepository;
         this.emailService = emailService;
+        this.productRepository = productRepository;
     }
 
 
 
-    public PurchaseEntity createPurchase(String email, PurchaseEntity purchaseDTO) throws Exception {
+    public PurchaseEntity createPurchase(String email, PurchaseDTO purchaseDTO) throws Exception {
+        PurchaseEntity purchaseEntity = new PurchaseEntity();
+
+        purchaseEntity.setUserId(purchaseDTO.getUserId());
+        purchaseEntity.setDateOfPurchase(purchaseDTO.getDateOfPurchase());
+
+        purchaseEntity = purchaseRepository.save(purchaseEntity);
 
 
-        return purchaseRepository.save(purchaseDTO);
+        for (PurchaseItemDTO itemDTO : purchaseDTO.getItems()) {
+            PurchaseItemEntity itemEntity = new PurchaseItemEntity();
+
+            // Buscar el producto asociado usando su ID
+            ProductEntity product = productRepository.findById(itemDTO.getProductId())
+                    .orElseThrow(() -> new Exception("Producto no encontrado con ID: " + itemDTO.getProductId()));
+
+
+            int newQuantity = product.getQuantity() - itemDTO.getQuantity();
+            if (newQuantity < 0) {
+                throw new Exception("No hay suficiente cantidad del producto  " + product.getName());
+            }
+            itemEntity.setProduct(product);
+
+            itemEntity.setQuantity(itemDTO.getQuantity());
+            itemEntity.setPriceAtPurchase(itemDTO.getPriceAtPurchase());
+
+            itemEntity.setPurchase(purchaseEntity);
+
+            product.setQuantity(newQuantity);
+            productRepository.save(product);
+
+            purchaseItemRepository.save(itemEntity);
+        }
+
+        purchaseEntity.setItems(purchaseItemRepository.findByPurchase(purchaseEntity));
+        sendVerificationCode(email, purchaseEntity.getId());
+
+        return purchaseEntity;
     }
+
 
     // Método para obtener compras de un usuario
-    public Optional<PurchaseEntity> getPurchasesByEmail(String email) throws Exception {
+    public List<GetPurchaseDTO> getPurchaseById(Long userId) {
+        Optional<PurchaseEntity> purchases = purchaseRepository.findByUserId(userId);
 
-
-        return purchaseRepository.findByEmail(email);
+        // Convertir cada PurchaseEntity a PurchaseDTO
+        return purchases.stream()
+                .map(this::convertToPurchaseDTO)
+                .collect(Collectors.toList());
     }
 
 
-    public String sendVerificationCode(String email) throws Exception {
-        UserEntity user = findUserBlock(email);
+    public String sendVerificationCode(String email, Long code) throws Exception {
 
-        return purchaseRepository.findByEmail(email).map(existingUser -> {
-            CodeVerification code = new CodeVerification();
-             code.setUser(existingUser);
-             code.setCode(generateRandomCode());
-             code.setExpiryDate(LocalDateTime.now().plusMinutes(15));
-             code.setUsed(false);
-            codeRepository.save(code);
-
-            emailService.sendEmail(
+        return emailService.sendEmail(
                     email,
-                    "Tu código de verificación",
-                     code.getCode()
+                    "Tu número de compra: ",
+                     code
             );
-        return  "Envio exitoso";
-        }).orElse("No se encuentra el correo registrado");
+
     }
 
+
+    private ProductDTO convertToDTO(ProductEntity productEntity) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(productEntity.getId());
+        productDTO.setName(productEntity.getName());
+        productDTO.setCode(productEntity.getCode());
+        productDTO.setDescription(productEntity.getDescription());
+        productDTO.setProfilePicture(productEntity.getProfilePicture());
+        productDTO.setPrice(productEntity.getPrice());
+        productDTO.setQuantity(productEntity.getQuantity());
+        productDTO.setRating(productEntity.getRating());
+
+        if (productEntity.getCategory() != null) {
+            productDTO.setCategory(Math.toIntExact(productEntity.getCategory().getId()));
+        }
+        return productDTO;
+    }
+
+
+
+
+
+    public GetPurchaseItemDTO convertToPurchaseItemDTO(PurchaseItemEntity itemEntity) {
+        GetPurchaseItemDTO itemDTO = new GetPurchaseItemDTO();
+        itemDTO.setId(itemEntity.getId());
+        itemDTO.setProduct(convertToDTO(itemEntity.getProduct()));
+        itemDTO.setQuantity(itemEntity.getQuantity());
+        itemDTO.setPriceAtPurchase(itemEntity.getPriceAtPurchase());
+        return itemDTO;
+    }
+
+    public GetPurchaseDTO convertToPurchaseDTO(PurchaseEntity purchaseEntity) {
+        GetPurchaseDTO purchaseDTO = new GetPurchaseDTO();
+        purchaseDTO.setId(purchaseEntity.getId());
+        purchaseDTO.setUserId(purchaseEntity.getUserId());
+        purchaseDTO.setDateOfPurchase(purchaseEntity.getDateOfPurchase());
+        purchaseDTO.setItems(purchaseEntity.getItems().stream()
+                .map(this::convertToPurchaseItemDTO)
+                .collect(Collectors.toList()));
+        return purchaseDTO;
+    }
 
 }

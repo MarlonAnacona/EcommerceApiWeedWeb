@@ -20,8 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    @Autowired
-    private AuthenticationProvider authenticationProvider; // Inyectado desde ApplicationConfig
 
     @Autowired
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
@@ -30,25 +28,20 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        JWTAutorizationFilter jwtAutorizationFilter=new JWTAutorizationFilter();
-        jwtAutorizationFilter.setAuthenticationManager(authenticationManager);
-        jwtAutorizationFilter.setFilterProcessesUrl("v1/User/loginUser");
         return http
                 .csrf(csrf ->
                         csrf
                                 .disable())
                 .authorizeHttpRequests(authRequest ->
                         authRequest
-                                .requestMatchers("v1/User/loginUser", "v1/User/createUser","v1/User/request-password-reset","/v1/User/verify-code","/v1/User/activeUser/**","/v1/User/updatePassword/**").permitAll()
+                                .requestMatchers("").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManager ->
                         sessionManager
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
-                .addFilter(jwtAutorizationFilter)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 

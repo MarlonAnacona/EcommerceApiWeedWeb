@@ -2,10 +2,10 @@
 
 
 import com.API.Pizzapp.Models.*;
-import com.API.Pizzapp.Repository.UserRepository;
+import com.API.Pizzapp.Repository.PurchaseRepository;
 import com.API.Pizzapp.Repository.VerificationCodeRepository;
 import com.API.Pizzapp.Services.JwtService;
-import com.API.Pizzapp.Services.UserServiceI;
+import com.API.Pizzapp.Services.PurchaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserServiceI {
 
 
 
-    private final UserRepository userRepository;
+    private final UserRepository purchaseRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -34,8 +34,8 @@ public class UserServiceImpl implements UserServiceI {
     private EmailServiceImpl emailService;
 
     @Autowired
-<span class="fc" id="L37">    public UserServiceImpl(UserRepository userRepository, JwtService jwtService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, VerificationCodeRepository codeRepository, EmailServiceImpl emailService) {</span>
-<span class="fc" id="L38">        this.userRepository = userRepository;</span>
+<span class="fc" id="L37">    public UserServiceImpl(UserRepository purchaseRepository, JwtService jwtService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, VerificationCodeRepository codeRepository, EmailServiceImpl emailService) {</span>
+<span class="fc" id="L38">        this.purchaseRepository = purchaseRepository;</span>
 <span class="fc" id="L39">        this.jwtService = jwtService;</span>
 <span class="fc" id="L40">        this.passwordEncoder = passwordEncoder;</span>
 <span class="fc" id="L41">        this.authenticationManager = authenticationManager;</span>
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserServiceI {
 <span class="fc" id="L56">                .build();</span>
 <span class="fc" id="L57">        user.setActive(true);</span>
 <span class="fc" id="L58">        user.setBlocked(false);</span>
-<span class="fc" id="L59">        userRepository.save(user);</span>
+<span class="fc" id="L59">        purchaseRepository.save(user);</span>
 <span class="fc" id="L60">        UserDetails userDetails = new UserDetailsImpl(user);</span>
 <span class="fc" id="L61">        return AuthResponse.builder()</span>
 <span class="fc" id="L62">                .token(jwtService.getToken(userDetails))</span>
@@ -85,13 +85,13 @@ public class UserServiceImpl implements UserServiceI {
     }
 
     public boolean isUserBlocked(String email) {
-<span class="nc" id="L88">        UserEntity user = userRepository.findByEmail(email).orElse(null);</span>
+<span class="nc" id="L88">        UserEntity user = purchaseRepository.findByEmail(email).orElse(null);</span>
 <span class="nc bnc" id="L89" title="All 4 branches missed.">        if (user != null &amp;&amp; user.isBlocked()) {</span>
 <span class="nc bnc" id="L90" title="All 2 branches missed.">            if (user.getBlockExpiryTime().isAfter(LocalDateTime.now())) {</span>
 <span class="nc" id="L91">                return true;</span>
             } else {
 <span class="nc" id="L93">                user.setBlocked(false);</span>
-<span class="nc" id="L94">                userRepository.save(user);</span>
+<span class="nc" id="L94">                purchaseRepository.save(user);</span>
             }
         }
 <span class="nc" id="L97">        return false;</span>
@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserServiceI {
     public UserEntity updateUser(String email, UserEntity userUpdates) throws Exception {
 <span class="fc" id="L103">        UserEntity user = findUserBlock(email);</span>
 
-<span class="fc" id="L105">        return userRepository.findByEmail(email).map(existingUser -&gt; {</span>
+<span class="fc" id="L105">        return purchaseRepository.findByEmail(email).map(existingUser -&gt; {</span>
 
 <span class="pc bpc" id="L107" title="1 of 2 branches missed.">            if (userUpdates.getNombre() != null) {</span>
 <span class="fc" id="L108">                existingUser.setNombre(userUpdates.getNombre());</span>
@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserServiceI {
 <span class="nc" id="L127">            existingUser.setProfilePicture(userUpdates.getProfilePicture());</span>
             }
 
-<span class="fc" id="L130">            return userRepository.save(existingUser);</span>
+<span class="fc" id="L130">            return purchaseRepository.save(existingUser);</span>
 
 <span class="fc" id="L132">        }).orElse(null);</span>
     }
@@ -136,24 +136,24 @@ public class UserServiceImpl implements UserServiceI {
     public UserEntity deleteUser(String email) throws Exception {
 <span class="nc" id="L137">        UserEntity user = findUserBlock(email);</span>
 
-<span class="nc" id="L139">        return userRepository.findByEmail(email).map(existingUser -&gt; {</span>
+<span class="nc" id="L139">        return purchaseRepository.findByEmail(email).map(existingUser -&gt; {</span>
 <span class="nc bnc" id="L140" title="All 2 branches missed.">            if(existingUser.isActive()){</span>
 <span class="nc" id="L141">                existingUser.setActive(false);</span>
             }
 
-<span class="nc" id="L144">            return userRepository.save(existingUser);</span>
+<span class="nc" id="L144">            return purchaseRepository.save(existingUser);</span>
 
 <span class="nc" id="L146">        }).orElse(null);    }</span>
 
     @Override
     public UserEntity activeUser(String email ) throws Exception {
 
-<span class="nc" id="L151">        return userRepository.findByEmail(email).map(existingUser -&gt; {</span>
+<span class="nc" id="L151">        return purchaseRepository.findByEmail(email).map(existingUser -&gt; {</span>
 <span class="nc bnc" id="L152" title="All 2 branches missed.">            if(!existingUser.isActive()){</span>
 <span class="nc" id="L153">                existingUser.setActive(true);</span>
             }
 
-<span class="nc" id="L156">            return userRepository.save(existingUser);</span>
+<span class="nc" id="L156">            return purchaseRepository.save(existingUser);</span>
 
 <span class="nc" id="L158">        }).orElse(null);</span>
     }
@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserServiceI {
     public String sendVerificationCode(String email) throws Exception {
 <span class="nc" id="L162">        UserEntity user = findUserBlock(email);</span>
 
-<span class="nc" id="L164">        return userRepository.findByEmail(email).map(existingUser -&gt; {</span>
+<span class="nc" id="L164">        return purchaseRepository.findByEmail(email).map(existingUser -&gt; {</span>
 <span class="nc" id="L165">            CodeVerification code = new CodeVerification();</span>
 <span class="nc" id="L166">             code.setUser(existingUser);</span>
 <span class="nc" id="L167">             code.setCode(generateRandomCode());</span>
@@ -186,7 +186,7 @@ public class UserServiceImpl implements UserServiceI {
 
 <span class="nc bnc" id="L187" title="All 2 branches missed.">        if(user.getAttemptCount()&gt;=3) {</span>
 <span class="nc" id="L188">            user.setAttemptCount(0);</span>
-<span class="nc" id="L189">            userRepository.save(user);</span>
+<span class="nc" id="L189">            purchaseRepository.save(user);</span>
         }
 <span class="nc bnc" id="L191" title="All 2 branches missed.">        if (verificationCodeOpt.isPresent() ) {</span>
 
@@ -205,7 +205,7 @@ public class UserServiceImpl implements UserServiceI {
 <span class="nc" id="L205">            codeRepository.save(vc);</span>
 
 <span class="nc" id="L207">            user.setAttemptCount(0);</span>
-<span class="nc" id="L208">            userRepository.save(user);</span>
+<span class="nc" id="L208">            purchaseRepository.save(user);</span>
 
 
 <span class="nc" id="L211">            return &quot;CÃ³digo verificado con Ã©xito.&quot;;</span>
@@ -216,7 +216,7 @@ public class UserServiceImpl implements UserServiceI {
 <span class="nc" id="L216">                user.setBlocked(true);</span>
 <span class="nc" id="L217">                user.setBlockExpiryTime(LocalDateTime.now().plusMinutes(30));</span>
             }
-<span class="nc" id="L219">            userRepository.save(user);</span>
+<span class="nc" id="L219">            purchaseRepository.save(user);</span>
 <span class="nc" id="L220">            throw new Exception(&quot;CÃ³digo incorrecto. Intentos restantes: &quot; + (3 - attempts));</span>
 
         }
@@ -224,7 +224,7 @@ public class UserServiceImpl implements UserServiceI {
     }
 
     private UserEntity findUserBlock(String email) throws Exception {
-<span class="fc" id="L227">        UserEntity user = userRepository.findByEmail(email)</span>
+<span class="fc" id="L227">        UserEntity user = purchaseRepository.findByEmail(email)</span>
 <span class="fc" id="L228">                .orElseThrow(() -&gt; new Exception(&quot;Usuario no encontrado.&quot;));</span>
 
         // Comprueba si el usuario ya estÃ¡ bloqueado.
