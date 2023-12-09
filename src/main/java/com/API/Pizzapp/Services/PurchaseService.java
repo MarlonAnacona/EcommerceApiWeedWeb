@@ -1,9 +1,7 @@
 package com.API.Pizzapp.Services;
 
 import com.API.Pizzapp.Models.AuthResponse;
-import com.API.Pizzapp.Models.LoginDTO;
 import com.API.Pizzapp.Models.UserEntity;
-import com.API.Pizzapp.Models.UserGetDTO;
 
 
 public interface UserServiceI {

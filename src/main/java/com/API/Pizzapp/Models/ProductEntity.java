@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReseñaEntity {
+public class ComprasEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

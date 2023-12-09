@@ -1,9 +1,8 @@
 package com.API.Pizzapp.controllerTest;
 
 import com.API.Pizzapp.Models.AuthResponse;
-import com.API.Pizzapp.Models.LoginDTO;
 import com.API.Pizzapp.Models.UserEntity;
-import com.API.Pizzapp.Repository.UserRepository;
+import com.API.Pizzapp.Repository.PurchaseRepository;
 import com.API.Pizzapp.Services.Impl.UserServiceImpl;
 import com.API.Pizzapp.Services.JwtService;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +25,7 @@ public class UserServiceImplTest {
     private UserServiceImpl userService;
 
     @Mock
-    private UserRepository userRepository;
+    private PurchaseRepository purchaseRepository;
 
     @Mock
     private AuthenticationManager authenticationManager;
@@ -48,7 +47,7 @@ public class UserServiceImplTest {
         UserEntity user = new UserEntity();
         user.setId(1L);
 
-        when(userRepository.save(any(UserEntity.class))).thenReturn(user);
+        when(purchaseRepository.save(any(UserEntity.class))).thenReturn(user);
 
         AuthResponse response = userService.createUser(new UserEntity());
         assertNotNull(response.getToken()); // Asegurarse de que el token no sea nulo
@@ -56,7 +55,7 @@ public class UserServiceImplTest {
 
     @Test
     public void testCreateUserFailure() {
-        when(userRepository.save(any(UserEntity.class))).thenThrow(new RuntimeException("Error al crear el usuario"));
+        when(purchaseRepository.save(any(UserEntity.class))).thenThrow(new RuntimeException("Error al crear el usuario"));
 
         assertThrows(RuntimeException.class, () -> userService.createUser(new UserEntity()));
     }
@@ -71,7 +70,7 @@ public class UserServiceImplTest {
         user.setActive(true); // Marcar al usuario como activo
         user.setPassword(passwordEncoder.encode("password"));
         when(passwordEncoder.matches(loginDTO.getPassword(),user.getPassword())).thenReturn(true);
-        when(userRepository.findByEmail(loginDTO.getEmail())).thenReturn(Optional.of(user));
+        when(purchaseRepository.findByEmail(loginDTO.getEmail())).thenReturn(Optional.of(user));
 
         AuthResponse response = userService.loginUser(loginDTO);
         assertNotNull(response.getToken()); // Asegurarse de que el token no sea nulo
@@ -84,7 +83,7 @@ public class UserServiceImplTest {
         loginDTO.setEmail("wrong@email.com");
         loginDTO.setPassword("wrongpassword");
 
-        when(userRepository.findByEmail(loginDTO.getEmail())).thenReturn(Optional.empty());
+        when(purchaseRepository.findByEmail(loginDTO.getEmail())).thenReturn(Optional.empty());
 
         assertThrows(Exception.class, () -> userService.loginUser(loginDTO));
     }
@@ -107,8 +106,8 @@ public class UserServiceImplTest {
         userUpdates.setApellido("New lastanme");
         userUpdates.setNombreUsuario("New UserName");
 
-        when(userRepository.findByEmail(id)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(existingUser)).thenReturn(existingUser);
+        when(purchaseRepository.findByEmail(id)).thenReturn(Optional.of(existingUser));
+        when(purchaseRepository.save(existingUser)).thenReturn(existingUser);
 
         UserEntity updatedUser = userService.updateUser(id, userUpdates);
         assertEquals("New Name", updatedUser.getNombre());
@@ -118,7 +117,7 @@ public class UserServiceImplTest {
     public void testUpdateUserNotFound() {
         String id = "null"; // Supongamos que "null" es un email que no existe en la base de datos.
 
-        when(userRepository.findByEmail(id)).thenReturn(Optional.empty());
+        when(purchaseRepository.findByEmail(id)).thenReturn(Optional.empty());
 
         // Debes usar assertThrows para verificar que el método arroje una excepción.
         assertThrows(Exception.class, () -> {
