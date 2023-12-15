@@ -57,8 +57,8 @@ jacocoTestReport {
 		xml.required = true
 		html.required = true
 		csv.required = false
-		xml.destination = file("/customJacocoReportDir/xml")
-		html.destination = file("/customJacocoReportDir/html")
+		xml.outputLocation = file("/customJacocoReportDir/xml")
+		html.outputLocation = file("/customJacocoReportDir/html")
 	}
 }
 test {

@@ -1,13 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Pizzapp</a> &gt; <a href="index.source.html" class="el_package">com.API.Pizzapp.Services</a> &gt; <span class="el_source">JwtService.java</span></div><h1>JwtService.java</h1><pre class="source lang-java linenums">package com.API.Pizzapp.Services;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">WeedWebEcommerce</a> &gt; <a href="index.source.html" class="el_package">com.API.Pizzapp.Services</a> &gt; <span class="el_source">JwtService.java</span></div><h1>JwtService.java</h1><pre class="source lang-java linenums">package com.API.Pizzapp.Services;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.API.Pizzapp.Models.UserDetailsImpl;
-import com.API.Pizzapp.Models.UserEntity;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.io.IOException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -18,71 +21,100 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
-<span class="fc" id="L21">public class JwtService {</span>
+<span class="fc" id="L24">public class JwtService {</span>
 
     private static final String SECRET_KEY=&quot;586E3272357538782F413F4428472B4B6250655368566B597033733676397924&quot;;
 
-    public String getToken(UserDetails user) {
-<span class="nc" id="L26">        Map&lt;String, Object&gt; extraClaims = new HashMap&lt;&gt;();</span>
-
-<span class="nc bnc" id="L28" title="All 2 branches missed.">        if (user instanceof UserDetailsImpl) {</span>
-<span class="nc" id="L29">            UserEntity customUser = ((UserDetailsImpl) user).getUserEntity();</span>
-
-<span class="nc" id="L31">            extraClaims.put(&quot;nombre&quot;, customUser.getNombre());</span>
-<span class="nc" id="L32">            extraClaims.put(&quot;nombreUsuario&quot;, customUser.getNombreUsuario());</span>
-<span class="nc" id="L33">            extraClaims.put(&quot;apellido&quot;, customUser.getApellido());</span>
-        }
-<span class="nc" id="L35">        return getToken(extraClaims, user);</span>
-    }
 
     private String getToken(Map&lt;String,Object&gt; extraClaims, UserDetails user) {
-<span class="nc" id="L39">        return Jwts</span>
-<span class="nc" id="L40">                .builder()</span>
-<span class="nc" id="L41">                .setClaims(extraClaims)</span>
-<span class="nc" id="L42">                .setSubject(user.getUsername())</span>
-<span class="nc" id="L43">                .setIssuedAt(new Date(System.currentTimeMillis()))</span>
-<span class="nc" id="L44">                .setExpiration(new Date(System.currentTimeMillis()+1000*60*24))</span>
-<span class="nc" id="L45">                .signWith(getKey(), SignatureAlgorithm.HS256)</span>
-<span class="nc" id="L46">                .compact();</span>
+<span class="nc" id="L30">        return Jwts</span>
+<span class="nc" id="L31">                .builder()</span>
+<span class="nc" id="L32">                .setClaims(extraClaims)</span>
+<span class="nc" id="L33">                .setSubject(user.getUsername())</span>
+<span class="nc" id="L34">                .setIssuedAt(new Date(System.currentTimeMillis()))</span>
+<span class="nc" id="L35">                .setExpiration(new Date(System.currentTimeMillis()+1000*60*24))</span>
+<span class="nc" id="L36">                .signWith(getKey(), SignatureAlgorithm.HS256)</span>
+<span class="nc" id="L37">                .compact();</span>
     }
 
     private Key getKey() {
-<span class="nc" id="L50">        byte[] keyBytes=Decoders.BASE64.decode(SECRET_KEY);</span>
-<span class="nc" id="L51">        return Keys.hmacShaKeyFor(keyBytes);</span>
+<span class="nc" id="L41">        byte[] keyBytes=Decoders.BASE64.decode(SECRET_KEY);</span>
+<span class="nc" id="L42">        return Keys.hmacShaKeyFor(keyBytes);</span>
     }
 
-    public String getUsernameFromToken(String token) {
-<span class="nc" id="L55">        return getClaim(token, Claims::getSubject);</span>
+    public Long getUsernameFromToken(String token) {
+<span class="nc" id="L46">        return getClaim(token, claims -&gt; claims.get(&quot;userId&quot;, Long.class));</span>
     }
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-<span class="nc" id="L58">        final String username=getUsernameFromToken(token);</span>
-<span class="nc bnc" id="L59" title="All 4 branches missed.">        return (username.equals(userDetails.getUsername())&amp;&amp; !isTokenExpired(token));</span>
+    public boolean isTokenValid(String token ) {
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        return (!isTokenExpired(token));</span>
     }
 
     private Claims getAllClaims(String token)
     {
-<span class="nc" id="L64">        return Jwts</span>
-<span class="nc" id="L65">                .parserBuilder()</span>
-<span class="nc" id="L66">                .setSigningKey(getKey())</span>
-<span class="nc" id="L67">                .build()</span>
-<span class="nc" id="L68">                .parseClaimsJws(token)</span>
-<span class="nc" id="L69">                .getBody();</span>
+<span class="nc" id="L54">        return Jwts</span>
+<span class="nc" id="L55">                .parserBuilder()</span>
+<span class="nc" id="L56">                .setSigningKey(getKey())</span>
+<span class="nc" id="L57">                .build()</span>
+<span class="nc" id="L58">                .parseClaimsJws(token)</span>
+<span class="nc" id="L59">                .getBody();</span>
     }
 
     public &lt;T&gt; T getClaim(String token, Function&lt;Claims,T&gt; claimsResolver)
     {
-<span class="nc" id="L74">        final Claims claims=getAllClaims(token);</span>
-<span class="nc" id="L75">        return claimsResolver.apply(claims);</span>
+<span class="nc" id="L64">        final Claims claims=getAllClaims(token);</span>
+<span class="nc" id="L65">        return claimsResolver.apply(claims);</span>
     }
 
     private Date getExpiration(String token)
     {
-<span class="nc" id="L80">        return getClaim(token, Claims::getExpiration);</span>
+<span class="nc" id="L70">        return getClaim(token, Claims::getExpiration);</span>
     }
 
-    private boolean isTokenExpired(String token)
-    {
-<span class="nc" id="L85">        return getExpiration(token).before(new Date());</span>
+    public Long getUserIdFromToken(String token) {
+<span class="nc" id="L74">        Map&lt;String, Object&gt; payloadMap = decodePayloadToMap(token);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (payloadMap != null) {</span>
+<span class="nc" id="L76">            return ((Number) payloadMap.get(&quot;userId&quot;)).longValue();</span>
+        }
+<span class="nc" id="L78">        return null;</span>
+    }
+
+    public boolean isTokenExpired(String token) {
+<span class="nc" id="L82">        Map&lt;String, Object&gt; payloadMap = decodePayloadToMap(token);</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (payloadMap != null) {</span>
+            Date expiration;
+<span class="nc" id="L85">            Object expObj = payloadMap.get(&quot;exp&quot;);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            if (expObj instanceof Integer) {</span>
+<span class="nc" id="L87">                expiration = new Date(((Integer) expObj).longValue() * 1000);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            } else if (expObj instanceof Long) {</span>
+<span class="nc" id="L89">                expiration = new Date((Long) expObj * 1000);</span>
+            } else {
+<span class="nc" id="L91">                return true; // Si no se puede determinar la fecha de expiraciÃ³n, considera el token como expirado</span>
+            }
+<span class="nc" id="L93">            return expiration.before(new Date());</span>
+        }
+<span class="nc" id="L95">        return true;</span>
+    }
+
+    private Map&lt;String, Object&gt; decodePayloadToMap(String token) {
+<span class="nc" id="L99">        String payload = decodePayload(token);</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        if (payload != null) {</span>
+            try {
+<span class="nc" id="L102">                ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="nc" id="L103">                return objectMapper.readValue(payload, Map.class);</span>
+<span class="nc" id="L104">            } catch (IOException | JsonProcessingException e) {</span>
+<span class="nc" id="L105">                e.printStackTrace(); // Manejo de la excepciÃ³n</span>
+            }
+        }
+<span class="nc" id="L108">        return null;</span>
+    }
+
+    private String decodePayload(String token) {
+<span class="nc" id="L112">        String[] parts = token.split(&quot;\\.&quot;);</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (parts.length == 3) {</span>
+<span class="nc" id="L114">            byte[] decoded = Base64.getUrlDecoder().decode(parts[1]);</span>
+<span class="nc" id="L115">            return new String(decoded, StandardCharsets.UTF_8);</span>
+        }
+<span class="nc" id="L117">        return null;</span>
     }
 
 }

@@ -12,25 +12,4 @@ import org.mockito.MockitoAnnotations;
 
 public class UserControllerTest {
 
-    @InjectMocks
-    private PurchaseControllerImp purchaseControllerImp;
-
-    @Mock
-    private PurchaseService purchaseService;
-
-    @BeforeEach
-    public void init() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-    @Mock
-    private HttpServletRequest request;
-
-    @Mock
-    JwtService jwtService;
-
-    @Mock
-    JwtAuthenticationFilter jwtAuthenticationFilter;
-
-
 }

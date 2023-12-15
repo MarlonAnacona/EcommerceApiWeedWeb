@@ -15,26 +15,6 @@ import static org.mockito.Mockito.*;
 
 public class PurchaseServiceImplTest {
 
-    @InjectMocks
-    private PurchaseServiceImpl userService;
-
-    @Mock
-    private PurchaseRepository purchaseRepository;
-
-    @Mock
-    private AuthenticationManager authenticationManager;
-
-    @Mock
-    private  PasswordEncoder passwordEncoder;
-
-    @Mock
-    private JwtService jwtService;
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        when(jwtService.getToken(any(UserDetails.class))).thenReturn("someToken");
-
-    }
 
 
 
