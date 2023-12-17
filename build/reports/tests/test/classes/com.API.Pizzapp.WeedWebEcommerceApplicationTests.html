@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.412s</div>
+<div class="counter">0.470s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,7 +79,7 @@
 </thead>
 <tr>
 <td class="success">contextLoads()</td>
-<td class="success">0.412s</td>
+<td class="success">0.470s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -87,8 +87,8 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>10:58:02.127 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.API.Pizzapp.WeedWebEcommerceApplicationTests]: WeedWebEcommerceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-10:58:02.267 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.API.Pizzapp.WeedWebEcommerceApplication for test class com.API.Pizzapp.WeedWebEcommerceApplicationTests
+<pre>10:48:03.033 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.API.Pizzapp.WeedWebEcommerceApplicationTests]: WeedWebEcommerceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+10:48:03.173 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.API.Pizzapp.WeedWebEcommerceApplication for test class com.API.Pizzapp.WeedWebEcommerceApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -98,32 +98,32 @@
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.1.5)
 
-2023-12-10T10:58:02.798-05:00  INFO 14648 --- [    Test worker] c.A.P.WeedWebEcommerceApplicationTests   : Starting WeedWebEcommerceApplicationTests using Java 17.0.7 with PID 14648 (started by Marlon Anacona in E:\Documentos\desarrollo\Ecommorce)
-2023-12-10T10:58:02.800-05:00  INFO 14648 --- [    Test worker] c.A.P.WeedWebEcommerceApplicationTests   : No active profile set, falling back to 1 default profile: &quot;default&quot;
-2023-12-10T10:58:03.631-05:00  INFO 14648 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
-2023-12-10T10:58:03.633-05:00  INFO 14648 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
-2023-12-10T10:58:03.673-05:00  INFO 14648 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.API.Pizzapp.Repository.CategoryRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
-2023-12-10T10:58:03.675-05:00  INFO 14648 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.API.Pizzapp.Repository.ProductRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
-2023-12-10T10:58:03.676-05:00  INFO 14648 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.API.Pizzapp.Repository.PurchaseItemRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
-2023-12-10T10:58:03.678-05:00  INFO 14648 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.API.Pizzapp.Repository.PurchaseRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
-2023-12-10T10:58:03.679-05:00  INFO 14648 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 41 ms. Found 0 JDBC repository interfaces.
-2023-12-10T10:58:03.691-05:00  INFO 14648 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
-2023-12-10T10:58:03.692-05:00  INFO 14648 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2023-12-10T10:58:03.731-05:00  INFO 14648 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 35 ms. Found 4 JPA repository interfaces.
-2023-12-10T10:58:04.258-05:00  INFO 14648 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2023-12-10T10:58:04.336-05:00  INFO 14648 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.13.Final
-2023-12-10T10:58:04.339-05:00  INFO 14648 --- [    Test worker] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
-2023-12-10T10:58:04.710-05:00  INFO 14648 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2023-12-10T10:58:04.750-05:00  INFO 14648 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-12-10T10:58:04.984-05:00  INFO 14648 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3746135b
-2023-12-10T10:58:04.986-05:00  INFO 14648 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2023-12-10T10:58:05.036-05:00  WARN 14648 --- [    Test worker] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2023-12-10T10:58:06.318-05:00  INFO 14648 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2023-12-10T10:58:06.445-05:00  INFO 14648 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2023-12-10T10:58:06.719-05:00  INFO 14648 --- [    Test worker] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2023-12-10T10:58:07.328-05:00  WARN 14648 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2023-12-10T10:58:07.471-05:00  INFO 14648 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@648cfef9, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@40955466, org.springframework.security.web.context.SecurityContextHolderFilter@3f1f6171, org.springframework.security.web.header.HeaderWriterFilter@7af20b4f, org.springframework.security.web.authentication.logout.LogoutFilter@788a2594, com.API.Pizzapp.Security.JwtAuthenticationFilter@7fcd7f91, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1780140f, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3709c652, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@19e90def, org.springframework.security.web.session.SessionManagementFilter@7478426, org.springframework.security.web.access.ExceptionTranslationFilter@54ddd4bd, org.springframework.security.web.access.intercept.AuthorizationFilter@925b315]
-2023-12-10T10:58:08.054-05:00  INFO 14648 --- [    Test worker] c.A.P.WeedWebEcommerceApplicationTests   : Started WeedWebEcommerceApplicationTests in 5.582 seconds (process running for 7.17)
+2023-12-17T10:48:03.737-05:00  INFO 4772 --- [    Test worker] c.A.P.WeedWebEcommerceApplicationTests   : Starting WeedWebEcommerceApplicationTests using Java 17.0.7 with PID 4772 (started by Marlon Anacona in E:\Documentos\desarrollo\Ecommorce)
+2023-12-17T10:48:03.739-05:00  INFO 4772 --- [    Test worker] c.A.P.WeedWebEcommerceApplicationTests   : No active profile set, falling back to 1 default profile: &quot;default&quot;
+2023-12-17T10:48:04.599-05:00  INFO 4772 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2023-12-17T10:48:04.601-05:00  INFO 4772 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+2023-12-17T10:48:04.651-05:00  INFO 4772 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.API.Pizzapp.Repository.CategoryRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2023-12-17T10:48:04.654-05:00  INFO 4772 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.API.Pizzapp.Repository.ProductRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2023-12-17T10:48:04.656-05:00  INFO 4772 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.API.Pizzapp.Repository.PurchaseItemRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2023-12-17T10:48:04.658-05:00  INFO 4772 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.API.Pizzapp.Repository.PurchaseRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2023-12-17T10:48:04.659-05:00  INFO 4772 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 51 ms. Found 0 JDBC repository interfaces.
+2023-12-17T10:48:04.671-05:00  INFO 4772 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2023-12-17T10:48:04.672-05:00  INFO 4772 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-12-17T10:48:04.714-05:00  INFO 4772 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 37 ms. Found 4 JPA repository interfaces.
+2023-12-17T10:48:05.274-05:00  INFO 4772 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-12-17T10:48:05.365-05:00  INFO 4772 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.13.Final
+2023-12-17T10:48:05.374-05:00  INFO 4772 --- [    Test worker] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
+2023-12-17T10:48:05.860-05:00  INFO 4772 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2023-12-17T10:48:05.903-05:00  INFO 4772 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-12-17T10:48:07.666-05:00  INFO 4772 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@40957c86
+2023-12-17T10:48:07.669-05:00  INFO 4772 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-12-17T10:48:07.861-05:00  WARN 4772 --- [    Test worker] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2023-12-17T10:48:09.434-05:00  INFO 4772 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2023-12-17T10:48:12.001-05:00  INFO 4772 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-12-17T10:48:12.281-05:00  INFO 4772 --- [    Test worker] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2023-12-17T10:48:12.889-05:00  WARN 4772 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-12-17T10:48:13.004-05:00  INFO 4772 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@7a3c0dc6, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@35d8229f, org.springframework.security.web.context.SecurityContextHolderFilter@4b0f130f, org.springframework.security.web.header.HeaderWriterFilter@50dffc4, org.springframework.security.web.authentication.logout.LogoutFilter@29e954ad, com.API.Pizzapp.Security.JwtAuthenticationFilter@59acd373, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@3c3b644b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@24aa7410, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@64c47c1c, org.springframework.security.web.session.SessionManagementFilter@6e77d9e6, org.springframework.security.web.access.ExceptionTranslationFilter@517b41f, org.springframework.security.web.access.intercept.AuthorizationFilter@5233a315]
+2023-12-17T10:48:13.806-05:00  INFO 4772 --- [    Test worker] c.A.P.WeedWebEcommerceApplicationTests   : Started WeedWebEcommerceApplicationTests in 10.412 seconds (process running for 12.141)
 </pre>
 </span>
 </div>
@@ -135,7 +135,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 8.3</a> at 10 dic. 2023 10:58:08</p>
+<a href="http://www.gradle.org">Gradle 8.3</a> at 17 dic. 2023 10:48:15</p>
 </div>
 </div>
 </body>
