@@ -12,6 +12,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -20,28 +26,43 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
-<span class="fc" id="L23">    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {</span>
-<span class="fc" id="L24">        this.jwtAuthenticationFilter = jwtAuthenticationFilter;</span>
+<span class="fc" id="L29">    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {</span>
+<span class="fc" id="L30">        this.jwtAuthenticationFilter = jwtAuthenticationFilter;</span>
 
-<span class="fc" id="L26">    }</span>
+<span class="fc" id="L32">    }</span>
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-<span class="fc" id="L31">        return http</span>
-<span class="fc" id="L32">                .csrf(csrf -&gt;</span>
-<span class="fc" id="L33">                        csrf</span>
-<span class="fc" id="L34">                                .disable())</span>
-<span class="fc" id="L35">                .authorizeHttpRequests(authRequest -&gt;</span>
+<span class="fc" id="L37">        return http</span>
+<span class="fc" id="L38">                .csrf(csrf -&gt;</span>
+<span class="fc" id="L39">                        csrf</span>
+<span class="fc" id="L40">                                .disable())</span>
+<span class="fc" id="L41">                .authorizeHttpRequests(authRequest -&gt;</span>
                         authRequest
-<span class="fc" id="L37">                                .anyRequest().authenticated()</span>
+<span class="fc" id="L43">                                .anyRequest().authenticated()</span>
                 )
-<span class="fc" id="L39">                .sessionManagement(sessionManager -&gt;</span>
-<span class="fc" id="L40">                        sessionManager</span>
-<span class="fc" id="L41">                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))</span>
-<span class="fc" id="L42">                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)</span>
-<span class="fc" id="L43">                .build();</span>
+<span class="fc" id="L45">                .sessionManagement(sessionManager -&gt;</span>
+<span class="fc" id="L46">                        sessionManager</span>
+<span class="fc" id="L47">                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))</span>
+<span class="fc" id="L48">                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)</span>
+<span class="fc" id="L49">                .cors(cors -&gt; cors</span>
+<span class="fc" id="L50">                        .configurationSource(corsConfigurationSource()))</span>
+<span class="fc" id="L51">                .build();</span>
 
+    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+<span class="fc" id="L56">        CorsConfiguration configuration = new CorsConfiguration();</span>
+<span class="fc" id="L57">        configuration.setAllowedOriginPatterns(Collections.singletonList(&quot;*&quot;)); // Permite cualquier origen</span>
+<span class="fc" id="L58">        configuration.setAllowedMethods(Collections.singletonList(&quot;*&quot;)); // Permite todos los mÃ©todos</span>
+<span class="fc" id="L59">        configuration.setAllowedHeaders(Collections.singletonList(&quot;*&quot;)); // Permite todas las cabeceras</span>
+<span class="fc" id="L60">        configuration.setAllowCredentials(true); // Permite credenciales</span>
+<span class="fc" id="L61">        configuration.setExposedHeaders(Arrays.asList(&quot;Authorization&quot;, &quot;Link&quot;)); // Expone ciertas cabeceras</span>
+
+<span class="fc" id="L63">        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span>
+<span class="fc" id="L64">        source.registerCorsConfiguration(&quot;/**&quot;, configuration); // Aplica la configuraciÃ³n a todas las rutas</span>
+<span class="fc" id="L65">        return source;</span>
     }
 }
 
